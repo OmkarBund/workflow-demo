@@ -1,33 +1,14 @@
-name: Run Python Automation
-
-# 1. Define when this action triggers
+name: Return HTTP Response
 on:
-  push:
-    branches: [ main ]
-  workflow_dispatch: # Allows manual execution from the GitHub UI
+  repository_dispatch:
+    types: [trigger-http-hook]
 
-# 2. Define the execution ecosystem
 jobs:
-  execute-script:
+  respond:
     runs-on: ubuntu-latest
-
-    # 3. List the sequential steps to perform
     steps:
-    - name: Clone Repository Code
-      uses: actions/checkout@v4
-
-    - name: Initialize Python Environment
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
-        cache: 'pip' # Speeds up subsequent runs by caching packages
-
-    - name: Install Project Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
-    - name: Execute Python Script
-      env:
-        MY_API_SECRET: ${{ secrets.API_SECRET_KEY }} # Inject sensitive environment variables safely
-      run: python main.py
+      - name: Send HTTP Response
+        uses: teknofire/gh-action-http-response@v1
+        with:
+          status: '200'
+          body: '{"message": "Action triggered successfully!"}'
