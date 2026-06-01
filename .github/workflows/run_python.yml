@@ -1,14 +1,19 @@
 name: Return HTTP Response
 on:
-  repository_dispatch:
+  workflow_dispatch:
     types: [trigger-http-hook]
-
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'production'
+      ref:
+        description: 'Branch or tag to trigger'
+        required: false
+        default: 'main'
 jobs:
-  respond:
+  run-action:
     runs-on: ubuntu-latest
     steps:
-      - name: Send HTTP Response
-        uses: teknofire/gh-action-http-response@v1
-        with:
-          status: '200'
-          body: '{"message": "Action triggered successfully!"}'
+      - name: Triggered via API
+        run: echo "Workflow triggered manually for ${{ github.event.inputs.environment }}"
